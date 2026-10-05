@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MeetingMate AI - AI Meeting Action-Item Extractor & Attendance</title>
+  <meta name="description" content="MeetingMate AI helps manage meetings, track time-based attendance, and automatically extract action items from meeting transcripts.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Left Sidebar Navigation -->
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-icon">A</div>
+        <div class="brand-text">
+          <span class="brand-title">MeetingMate AI</span>
+          <span class="brand-tagline">Smart Workspace</span>
+        </div>
+      </div>
+
+      <nav class="nav-menu">
+        <button class="nav-item active" data-page="home-page" id="nav-home">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+          <span>Home</span>
+        </button>
+        <button class="nav-item" data-page="meetings-page" id="nav-meetings">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+          <span>Meetings</span>
+        </button>
+        <button class="nav-item" data-page="analyze-page" id="nav-analyze">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+          <span>Analyze Meeting</span>
+        </button>
+        <button class="nav-item" data-page="history-page" id="nav-history">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+          <span>History</span>
+        </button>
+        <button class="nav-item" data-page="about-page" id="nav-about">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+          <span>About</span>
+        </button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="status-indicator">
+          <span class="pulse-dot"></span>
+          <span class="status-text">Flask AI Engine: Online</span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      
+      <!-- 1. HOME / LANDING PAGE -->
+      <section id="home-page" class="page-section active">
+        <div class="hero-banner">
+          <div class="hero-content">
+            <div class="badge-pill">College AI & Meeting Management Project</div>
+            <h1 class="hero-title">MeetingMate <span class="gradient-text">AI</span></h1>
+            <p class="hero-subtitle">Smart Meetings. Clear Actions. Better Teams.</p>
+            <p class="hero-desc">
+              MeetingMate AI helps manage meetings, track time-based attendance, and automatically extract action items from meeting transcripts.
+            </p>
+            <div class="hero-actions">
+              <button class="btn btn-primary" id="home-create-btn">
+                <span>Create Meeting</span>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+              </button>
+              <button class="btn btn-secondary" id="home-analyze-btn">
+                <span>Analyze Transcript</span>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+              </button>
+            </div>
+
+            <!-- Quick Join Meeting with Link / Code -->
+            <div class="quick-join-card">
+              <div class="quick-join-header">
+                <span class="quick-join-icon">🔗</span>
+                <div>
+                  <h4>Join Meeting via Link or Code</h4>
+                  <p class="text-muted text-sm">Have a meeting link or code? Enter below to join instantly.</p>
+                </div>
+              </div>
+              <div class="quick-join-inputs">
+                <input type="text" id="home-join-code-input" class="form-control" placeholder="Paste link or meeting code (e.g. meet-3982)">
+                <input type="text" id="home-join-name-input" class="form-control" placeholder="Your Name (e.g. Shilpi)">
+                <button type="button" class="btn btn-primary" id="home-join-submit-btn">
+                  <span>Join Meeting</span>
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="hero-visual">
+            <div class="robot-card">
+              <div class="robot-avatar">🤖</div>
+              <div class="floating-doc">
+                <div class="doc-line short"></div>
+                <div class="doc-line long"></div>
+                <div class="doc-badge">✓ AI Analyzed</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4 Feature Cards -->
+        <div class="features-grid">
+          <div class="feature-card">
+            <div class="feature-icon icon-blue">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+            </div>
+            <h3>Meeting Timer</h3>
+            <p>Set duration, track elapsed and remaining time, with pause/resume and alerts.</p>
+          </div>
+
+          <div class="feature-card">
+            <div class="feature-icon icon-cyan">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+            </div>
+            <h3>Time-Based Attendance</h3>
+            <p>Track join/leave timestamps with custom minimum attendance threshold rules.</p>
+          </div>
+
+          <div class="feature-card">
+            <div class="feature-icon icon-purple">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+            </div>
+            <h3>AI Action-Item Extraction</h3>
+            <p>Extract tasks, responsible owners, deadlines, and confidence scores using NLP.</p>
+          </div>
+
+          <div class="feature-card">
+            <div class="feature-icon icon-pink">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+            </div>
+            <h3>Meeting History</h3>
+            <p>Save past meeting statistics and export extracted action items to CSV easily.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2. CREATE MEETING PAGE -->
+      <section id="meetings-page" class="page-section">
+        <div class="section-header">
+          <div class="section-title-wrap">
+            <div class="header-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+            </div>
+            <div>
+              <h2>Create a New Meeting</h2>
+              <p class="section-subtitle">Set meeting details and add participants.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="card form-card">
+          <form id="create-meeting-form">
+            <div class="form-group">
+              <label for="meeting-title">Meeting Title</label>
+              <input type="text" id="meeting-title" class="form-control" placeholder="e.g. Project Discussion" value="Project Discussion" required>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group col-half">
+                <label for="meeting-date">Date</label>
+                <input type="date" id="meeting-date" class="form-control" required>
+              </div>
+              <div class="form-group col-half">
+                <label for="meeting-start-time">Start Time</label>
+                <input type="time" id="meeting-start-time" class="form-control" required>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group col-half">
+                <label for="meeting-duration">Meeting Duration</label>
+                <select id="meeting-duration" class="form-control">
+                  <option value="15">15 minutes</option>
+                  <option value="30" selected>30 minutes</option>
+                  <option value="45">45 minutes</option>
+                  <option value="60">60 minutes</option>
+                </select>
+              </div>
+              <div class="form-group col-half">
+                <label for="meeting-min-attendance">
+                  Minimum Attendance Time
+                  <span class="help-tooltip" title="Participant must attend MORE THAN this time to be marked Present.">ⓘ (&gt; rule)</span>
+                </label>
+                <select id="meeting-min-attendance" class="form-control">
+                  <option value="10">10 minutes</option>
+                  <option value="15">15 minutes</option>
+                  <option value="20" selected>20 minutes</option>
+                  <option value="25">25 minutes</option>
+                  <option value="30">30 minutes</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Participant Addition -->
+            <div class="participants-section">
+              <div class="participants-section-header">
+                <label for="new-participant-input">Meeting Members (<span id="create-member-count">4</span>)</label>
+                <span class="text-muted text-sm">Add team members who will attend</span>
+              </div>
+              <div class="add-participant-row">
+                <input type="text" id="new-participant-input" class="form-control" placeholder="Enter member name (e.g. Shilpi Kashyap)">
+                <button type="button" class="btn btn-primary" id="add-participant-btn">
+                  <span>+ Add Member</span>
+                </button>
+              </div>
+
+              <!-- Quick Add Preset Suggestions -->
+              <div class="quick-preset-members">
+                <span class="preset-label">Quick Suggestions:</span>
+                <button type="button" class="preset-pill-btn" data-name="Neha Sharma">+ Neha Sharma</button>
+                <button type="button" class="preset-pill-btn" data-name="Vikram Patel">+ Vikram Patel</button>
+                <button type="button" class="preset-pill-btn" data-name="Ananya Roy">+ Ananya Roy</button>
+                <button type="button" class="preset-pill-btn" data-name="Karan Malhotra">+ Karan Malhotra</button>
+              </div>
+
+              <div class="participant-chips-container" id="participant-chips-list">
+                <!-- Participant items populated by JavaScript -->
+              </div>
+            </div>
+
+            <div class="form-footer">
+              <button type="submit" class="btn btn-primary btn-block btn-lg" id="submit-create-btn">
+                <span>Create Meeting</span>
+              </button>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <!-- 3. ACTIVE MEETING (TIMER) PAGE -->
+      <section id="active-meeting-page" class="page-section">
+        <div class="meeting-header-bar">
+          <div class="meeting-header-info">
+            <div class="meeting-title-row">
+              <h2 id="active-title-display">Project Discussion</h2>
+              <span class="badge badge-success">Meeting in Progress</span>
+            </div>
+            <p class="meta-text" id="active-meta-display">Date: Oct 5, 2026 | Started at: 10:00 AM</p>
+            
+            <!-- Shareable Meeting Link & Copy Button -->
+            <div class="meeting-link-bar">
+              <div class="link-label">
+                <span class="link-icon">🔗</span>
+                <strong>Meeting Link:</strong>
+              </div>
+              <input type="text" id="active-meeting-link-input" class="form-control form-control-sm meeting-link-input" readonly value="http://127.0.0.1:5000/?join=meet-demo">
+              <button type="button" class="btn btn-sm btn-secondary" id="copy-meeting-link-btn" title="Copy meeting link to share">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                <span id="copy-link-text">Copy Link</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="meeting-top-stats">
+            <div class="stat-pill">
+              <span class="stat-lbl">Duration</span>
+              <strong id="active-duration-val">30 mins</strong>
+            </div>
+            <div class="stat-pill">
+              <span class="stat-lbl">Min. Required</span>
+              <strong id="active-min-val">&gt; 20 mins</strong>
+            </div>
+          </div>
+        </div>
+
+        <!-- Timer Centerpiece -->
+        <div class="timer-section-card">
+          <div class="timer-wrapper">
+            <div class="timer-circle-container">
+              <svg class="progress-ring" width="220" height="220">
+                <circle class="progress-ring__bg" stroke="#E2E8F0" stroke-width="12" fill="transparent" r="95" cx="110" cy="110"/>
+                <circle class="progress-ring__bar" id="timer-progress-bar" stroke="#4F46E5" stroke-width="12" stroke-linecap="round" fill="transparent" r="95" cx="110" cy="110"/>
+              </svg>
+              <div class="timer-display-inner">
+                <span class="timer-label">Time Remaining</span>
+                <span class="timer-digits" id="timer-countdown">30:00</span>
+                <span class="timer-limit" id="timer-total-limit">/ 30:00</span>
+              </div>
+            </div>
+
+            <div class="timer-status-alerts">
+              <div id="timer-alert-box" class="timer-alert hidden">
+                ⚠️ Meeting Time Limit Reached
+              </div>
+              <div class="elapsed-badge">
+                Elapsed Time: <strong id="timer-elapsed">00:00</strong>
+              </div>
+            </div>
+
+            <div class="timer-controls">
+              <button class="btn btn-secondary" id="timer-pause-btn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>
+                <span>Pause</span>
+              </button>
+              <button class="btn btn-success" id="timer-resume-btn" style="display:none;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                <span>Resume</span>
+              </button>
+              <button class="btn btn-danger" id="timer-end-btn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><rect x="4" y="4" width="16" height="16" rx="2"></rect></svg>
+                <span>End Meeting</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Participant Live Tracking Table -->
+        <div class="card table-card">
+          <div class="card-header-flex">
+            <div>
+              <h3>Live Member Attendance (<span id="active-participant-count">0</span>)</h3>
+              <span class="text-muted text-sm">Real-time Join/Leave status tracking</span>
+            </div>
+            <!-- Live Add Member Controls -->
+            <div class="live-add-member-form">
+              <input type="text" id="live-new-member-input" class="form-control form-control-sm" placeholder="Add new member to meeting...">
+              <button type="button" class="btn btn-sm btn-primary" id="live-add-member-btn">
+                <span>+ Add Member</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Name</th>
+                  <th>Join Time</th>
+                  <th>Leave Time</th>
+                  <th>Time Attended</th>
+                  <th>Status</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="active-participants-tbody">
+                <!-- Dynamically populated rows -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4. MEETING END SUMMARY PAGE -->
+      <section id="summary-page" class="page-section">
+        <div class="summary-hero-card">
+          <div class="summary-title-wrap">
+            <div class="icon-circle check-circle">✓</div>
+            <div>
+              <h2>Meeting Completed</h2>
+              <p id="summary-meeting-title-sub">Project Discussion has ended successfully.</p>
+            </div>
+          </div>
+          <span class="badge badge-success" id="summary-status-badge">Completed on Time</span>
+        </div>
+
+        <!-- 4 Summary Metrics -->
+        <div class="metrics-grid">
+          <div class="metric-card">
+            <div class="metric-icon icon-blue">⏱</div>
+            <div>
+              <span class="metric-label">Total Duration</span>
+              <h3 id="summary-duration-val">30 mins</h3>
+              <small class="text-muted" id="summary-limit-sub">Time limit: 30 mins</small>
+            </div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-icon icon-purple">👥</div>
+            <div>
+              <span class="metric-label">Total Participants</span>
+              <h3 id="summary-total-part">4</h3>
+            </div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-icon icon-green">✓</div>
+            <div>
+              <span class="metric-label">Present</span>
+              <h3 id="summary-present-part" class="text-success">2</h3>
+            </div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-icon icon-red">✕</div>
+            <div>
+              <span class="metric-label">Absent</span>
+              <h3 id="summary-absent-part" class="text-danger">2</h3>
+            </div>
+          </div>
+        </div>
+
+        <!-- Participant Attendance Table -->
+        <div class="card table-card">
+          <div class="card-header-flex">
+            <h3>Participant Attendance Report</h3>
+            <span class="badge badge-info" id="summary-rule-badge">Rule: Attended &gt; 20 min</span>
+          </div>
+
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Name</th>
+                  <th>Join Time</th>
+                  <th>Leave Time</th>
+                  <th>Time Attended</th>
+                  <th>Percentage</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="summary-participants-tbody">
+                <!-- Dynamically populated summary rows -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="summary-actions">
+          <button class="btn btn-primary" id="summary-analyze-btn">
+            <span>Analyze Transcript</span>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+          </button>
+          <button class="btn btn-secondary" id="summary-save-history-btn">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+            <span>Save to History</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- 5. ANALYZE MEETING TRANSCRIPT PAGE -->
+      <section id="analyze-page" class="page-section">
+        <div class="section-header">
+          <div class="section-title-wrap">
+            <div class="header-icon purple-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+            </div>
+            <div>
+              <h2>AI Meeting Transcript Analyzer</h2>
+              <p class="section-subtitle">Upload or paste your meeting transcript to extract action items.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="card form-card">
+          <!-- Mode Tabs -->
+          <div class="tab-controls">
+            <button class="tab-btn active" id="tab-paste-btn">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect></svg>
+              <span>Paste Transcript</span>
+            </button>
+            <button class="tab-btn" id="tab-upload-btn">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+              <span>Upload File (.txt)</span>
+            </button>
+          </div>
+
+          <!-- Paste Tab Content -->
+          <div id="paste-tab-content">
+            <div class="form-group">
+              <textarea id="transcript-textarea" class="form-control transcript-box" rows="8" placeholder="Rahul: I will complete the homepage by Friday.
+Aman: I will prepare the database documentation by Monday.
+Shilpi: I will test the website after development.
+Someone should prepare the presentation by Friday."></textarea>
+              <div class="textarea-footer">
+                <button type="button" class="btn-text" id="load-sample-btn">⚡ Load Example Transcript</button>
+                <span class="char-counter" id="char-counter">0 / 5000 characters</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Upload Tab Content -->
+          <div id="upload-tab-content" style="display: none;">
+            <div class="file-drop-zone" id="file-drop-zone">
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#6366F1" stroke-width="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+              <p><strong>Click to browse</strong> or drag & drop a .txt transcript file</p>
+              <span class="text-muted text-sm" id="uploaded-file-name">No file selected</span>
+              <input type="file" id="transcript-file-input" accept=".txt" style="display: none;">
+            </div>
+          </div>
+
+          <!-- Example helper card -->
+          <div class="example-box">
+            <div class="example-title">💡 Format Example:</div>
+            <pre class="example-code">Rahul: I will complete the homepage by Friday.
+Aman: I will prepare the database documentation by Monday.
+Shilpi: I will test the website after development.
+Someone should prepare the presentation by Friday.</pre>
+          </div>
+
+          <div class="form-footer">
+            <button class="btn btn-primary btn-block btn-lg" id="submit-analyze-btn">
+              <span>Analyze Transcript</span>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- 6. ANALYSIS RESULTS PAGE -->
+      <section id="results-page" class="page-section">
+        <div class="results-header-bar">
+          <div>
+            <div class="meeting-title-row">
+              <h2>Meeting Analysis Results</h2>
+            </div>
+            <p class="section-subtitle">Extracted action items from your meeting transcript.</p>
+          </div>
+          <div>
+            <button class="btn btn-secondary" id="download-csv-btn">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+              <span>Download CSV</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- 4 Summary Stat Cards -->
+        <div class="metrics-grid">
+          <div class="metric-card">
+            <div class="metric-icon icon-blue">📋</div>
+            <div>
+              <span class="metric-label">Total Action Items</span>
+              <h3 id="res-total-items">0</h3>
+            </div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-icon icon-green">🟢</div>
+            <div>
+              <span class="metric-label">High Confidence</span>
+              <h3 id="res-high-conf" class="text-success">0</h3>
+            </div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-icon icon-orange">⚠️</div>
+            <div>
+              <span class="metric-label">Needs Review</span>
+              <h3 id="res-needs-rev" class="text-warning">0</h3>
+            </div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-icon icon-purple">👤</div>
+            <div>
+              <span class="metric-label">Unique Owners</span>
+              <h3 id="res-unique-owners" class="text-primary">0</h3>
+            </div>
+          </div>
+        </div>
+
+        <!-- Action Items Table -->
+        <div class="card table-card">
+          <div class="card-header-flex">
+            <h3>Extracted Action Items</h3>
+            <button class="btn btn-sm btn-primary" id="add-manual-item-btn">+ Add Item</button>
+          </div>
+
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Action Item / Task</th>
+                  <th>Owner</th>
+                  <th>Deadline</th>
+                  <th>Status</th>
+                  <th>Confidence</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="action-items-tbody">
+                <!-- Dynamically populated rows -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="summary-actions">
+          <button class="btn btn-secondary" id="results-reanalyze-btn">
+            <span>← Analyze Another Transcript</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- 7. MEETING HISTORY PAGE -->
+      <section id="history-page" class="page-section">
+        <div class="section-header">
+          <div class="section-title-wrap">
+            <div class="header-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+            </div>
+            <div>
+              <h2>Meeting History</h2>
+              <p class="section-subtitle">View and manage your past meetings.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="card table-card">
+          <div class="history-filter-bar">
+            <div class="search-wrap">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+              <input type="text" id="history-search-input" placeholder="Search meetings by title...">
+            </div>
+            <button class="btn btn-sm btn-secondary" id="clear-all-history-btn">Clear All History</button>
+          </div>
+
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Meeting Title</th>
+                  <th>Date</th>
+                  <th>Duration</th>
+                  <th>Participants</th>
+                  <th>Present</th>
+                  <th>Absent</th>
+                  <th>Action Items</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="history-tbody">
+                <!-- Dynamically populated from localStorage -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- 8. ABOUT PAGE -->
+      <section id="about-page" class="page-section">
+        <div class="about-hero-card">
+          <div class="about-hero-text">
+            <h2>About <span class="gradient-text">MeetingMate AI</span></h2>
+            <p class="about-description">
+              MeetingMate AI is a simple, explainable AI-powered meeting management application that helps teams track meeting duration and time-based attendance while automatically extracting action items, responsible persons, deadlines and confidence scores from meeting transcripts.
+            </p>
+          </div>
+          <div class="about-hero-robot">
+            <div class="robot-avatar large">🤖</div>
+          </div>
+        </div>
+
+        <!-- Key Features Section -->
+        <div class="about-section-card">
+          <h3>Key Features</h3>
+          <div class="features-grid-about">
+            <div class="about-feature-item">
+              <div class="feature-icon icon-blue">⏱</div>
+              <div>
+                <strong>Meeting Timer</strong>
+                <p>Live countdown and elapsed time tracking with alerts.</p>
+              </div>
+            </div>
+            <div class="about-feature-item">
+              <div class="feature-icon icon-cyan">👥</div>
+              <div>
+                <strong>Time-Based Attendance</strong>
+                <p>Calculates attendance percentage using strict minimum time thresholds.</p>
+              </div>
+            </div>
+            <div class="about-feature-item">
+              <div class="feature-icon icon-purple">🧠</div>
+              <div>
+                <strong>AI Action-Item Extraction</strong>
+                <p>Extracts tasks, owners, and deadlines with explainable confidence.</p>
+              </div>
+            </div>
+            <div class="about-feature-item">
+              <div class="feature-icon icon-pink">📊</div>
+              <div>
+                <strong>Meeting History</strong>
+                <p>Stores completed meetings and exports actionable reports to CSV.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Technologies Used Section -->
+        <div class="about-section-card">
+          <h3>Technologies Used</h3>
+          <div class="tech-stack-badges">
+            <span class="tech-badge"><span class="tech-dot orange"></span> HTML5</span>
+            <span class="tech-badge"><span class="tech-dot blue"></span> CSS3</span>
+            <span class="tech-badge"><span class="tech-dot yellow"></span> JavaScript (ES6)</span>
+            <span class="tech-badge"><span class="tech-dot green"></span> Python (Flask)</span>
+            <span class="tech-badge"><span class="tech-dot cyan"></span> NumPy</span>
+            <span class="tech-badge"><span class="tech-dot purple"></span> Python NLP Libraries</span>
+          </div>
+        </div>
+
+        <!-- College Viva Cheatsheet Box -->
+        <div class="about-section-card viva-box">
+          <h3>🎓 College Viva & Project Explanation Highlights</h3>
+          <ul class="viva-list">
+            <li><strong>Attendance Logic:</strong> Attendance is marked <code>Present</code> strictly when <code>Attended Time &gt; Minimum Attendance Time</code> (e.g. 25 min &gt; 20 min is Present, 20 min is Absent).</li>
+            <li><strong>Attendance Percentage:</strong> Calculated as <code>(Attended Time / Total Meeting Duration) × 100</code>.</li>
+            <li><strong>AI/NLP Extraction:</strong> Uses Regex tokenization and keyword mapping to extract action verbs, speaker prefixes (Owners), and temporal entities (Deadlines).</li>
+            <li><strong>NumPy Scoring:</strong> Computes weighted dot product across feature matrices for confidence scores.</li>
+          </ul>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- Edit Action Item Modal -->
+  <div class="modal-overlay" id="edit-modal" style="display: none;">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 id="modal-title">Edit Action Item</h3>
+        <button class="modal-close-btn" id="modal-close-btn">&times;</button>
+      </div>
+      <form id="edit-action-form">
+        <input type="hidden" id="edit-item-index">
+        
+        <div class="form-group">
+          <label for="edit-task">Task / Action Item</label>
+          <input type="text" id="edit-task" class="form-control" required>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group col-half">
+            <label for="edit-owner">Owner / Responsible</label>
+            <input type="text" id="edit-owner" class="form-control" required>
+          </div>
+          <div class="form-group col-half">
+            <label for="edit-deadline">Deadline</label>
+            <input type="text" id="edit-deadline" class="form-control" placeholder="e.g. Friday">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group col-half">
+            <label for="edit-status">Status</label>
+            <select id="edit-status" class="form-control">
+              <option value="Pending">Pending</option>
+              <option value="In Progress">In Progress</option>
+              <option value="Completed">Completed</option>
+              <option value="Needs Review">Needs Review</option>
+            </select>
+          </div>
+          <div class="form-group col-half">
+            <label for="edit-confidence">Confidence (%)</label>
+            <input type="number" id="edit-confidence" class="form-control" min="0" max="100" step="1">
+          </div>
+        </div>
+
+  <!-- Join Meeting Modal -->
+  <div class="modal-overlay" id="join-modal" style="display: none;">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 id="join-modal-title">Join Meeting</h3>
+        <button class="modal-close-btn" id="join-modal-close-btn">&times;</button>
+      </div>
+      <form id="join-meeting-form">
+        <div class="form-group">
+          <label for="join-modal-code">Meeting Code / Link</label>
+          <input type="text" id="join-modal-code" class="form-control" placeholder="e.g. meet-8842 or full link" required>
+        </div>
+
+        <div class="form-group">
+          <label for="join-modal-name">Your Full Name</label>
+          <input type="text" id="join-modal-name" class="form-control" placeholder="e.g. Shilpi Kashyap" required>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" id="join-modal-cancel-btn">Cancel</button>
+          <button type="submit" class="btn btn-primary">Join Meeting Now</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
